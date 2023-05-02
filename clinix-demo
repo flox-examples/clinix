@@ -1,0 +1,13 @@
+#!/usr/bin/python
+
+from __future__ import print_function
+
+import sys, os
+from clinix import get_runtime_info
+from termcolor import colored
+
+rinfo = get_runtime_info()
+keylen = max(map(len, rinfo.keys()))
+
+for k, v in sorted(get_runtime_info().items()):
+    print("%-*s %s" % (keylen + 1, k + ":", colored(v, 'green')))

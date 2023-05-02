@@ -1,0 +1,13 @@
+all: runtime.png
+
+runtime.png: runtime.dot
+        dot -Tpng $< > $@
+
+runtime.dot: FORCE
+        nix-store -q --graph ./result | sed 's/.nix.store..................................//g' | sed 's/ff0000/e0e0e0/' > $@
+
+tred.dot: FORCE
+        nix-store -q --graph ./result | sed 's/.nix.store..................................//g' | tred | sed 's/ff0000/e0e0e0/' > $@
+
+.PHONY: FORCE
+FORCE:
