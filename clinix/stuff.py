@@ -4,10 +4,12 @@ from __future__ import print_function
 import sys, os, json
 from datetime import datetime
 import requests
-import functools
 import json
+from joblib import Memory
+user = os.environ.get('USER')
+memory = Memory(f"/tmp/{user}", verbose=0)
 
-@functools.lru_cache(maxsize=None)
+@memory.cache
 def geolocation_data():
     # Attempt until we're successful
     while True:

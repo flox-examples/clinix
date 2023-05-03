@@ -9,6 +9,7 @@ python3Packages.buildPythonApplication {
   PIP_DISABLE_PIP_VERSION_CHECK = 1;
   # Add Python modules needed by your package here
   propagatedBuildInputs = with python3Packages; [
+    joblib
     termcolor
     requests
   ];
