@@ -2,12 +2,24 @@
 
 from __future__ import print_function
 
-import sys, os
+import sys, os, time
 from clinix import get_runtime_info
 from termcolor import colored
 
-rinfo = get_runtime_info()
-keylen = max(map(len, rinfo.keys()))
+the_color = "magenta" # <== MODIFY HERE
 
-for k, v in sorted(get_runtime_info().items()):
-    print("%-*s %s" % (keylen + 1, k + ":", colored(v, 'green')))
+last_exec = None
+while True:
+    rinfo = get_runtime_info()
+    if last_exec is None:
+        last_exec = rinfo["exec"]
+    elif last_exec != rinfo["exec"]:
+        # Tail recursion
+        os.execv(rinfo["argv0"], [rinfo["argv0"]])
+
+    # Clear screen and print data
+    keylen = max(map(len, rinfo.keys()))
+    os.system("clear")
+    for k, v in sorted(get_runtime_info().items()):
+        print("%-*s %s" % (keylen + 1, k + ":", colored(v, the_color)))
+    time.sleep(1)

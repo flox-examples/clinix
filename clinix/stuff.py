@@ -4,7 +4,24 @@ from __future__ import print_function
 import sys, os, json
 from datetime import datetime
 import requests
+import functools
 import json
+
+@functools.lru_cache(maxsize=None)
+def geolocation_data():
+    # Attempt until we're successful
+    while True:
+        try:
+            # get my real ip address
+            ip_address = requests.get("https://api.ipify.org/?format=json").json()['ip']
+            # look up my geolocation info
+            request_url = f"https://geolocation-db.com/jsonp/{ip_address}"
+            response = requests.get(request_url)
+            result = response.content.decode()
+            result = result.split("(")[1].strip(")")
+            return json.loads(result)
+        except:
+            pass
 
 def get_runtime_info():
     ret = {}
@@ -13,7 +30,7 @@ def get_runtime_info():
     # values as saved/exported by the nix wrapper itself.
     ret["argv0"] = os.environ.get('NIX_ORIG_ARGV0') or sys.argv[0]
     ret["argv0_abs"] = os.path.abspath(ret["argv0"])
-    ret["exec"] = os.path.realpath(sys.argv[0])
+    ret["exec"] = os.path.realpath(ret["argv0"])
 
     ret["isnix"] = ret["exec"].startswith("/nix/store/")
 
@@ -35,18 +52,10 @@ def get_runtime_info():
             if "version" in data:
                 ret["version"] = data["version"]
 
-    # get my real ip address
-    ip_address = requests.get("https://api.ipify.org/?format=json").json()['ip']
-    # look up my geolocation info
-    request_url = f"https://geolocation-db.com/jsonp/{ip_address}"
-    response = requests.get(request_url)
-    result = response.content.decode()
-    result = result.split("(")[1].strip(")")
-    result = json.loads(result)
-    for i in result.keys():
-        ret[f"geo-{i}"] = result[i]
+    for key, value in geolocation_data().items():
+        ret[f"geo-{key}"] = value
 
-    if ret["argv0"] == ret["argv0"]:
+    if ret["argv0"] == ret["argv0_abs"]:
         del ret["argv0_abs"]
 
     ret["time"] = datetime.now().strftime("%H:%M:%S")
