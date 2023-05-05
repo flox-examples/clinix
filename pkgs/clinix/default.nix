@@ -1,11 +1,12 @@
 {
+  lib,
   self,
   python3Packages,
 }:
 python3Packages.buildPythonApplication {
   pname = "clinix";
-  version = "0.0.0";
   src = self;
+  version = builtins.trace "0.0.1-${lib.flox-floxpkgs.getRev self}" "0.0.1-r${toString self.revCount or "dirty"}";
   PIP_DISABLE_PIP_VERSION_CHECK = 1;
   # Add Python modules needed by your package here
   propagatedBuildInputs = with python3Packages; [
