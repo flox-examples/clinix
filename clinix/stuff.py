@@ -31,13 +31,16 @@ def get_runtime_info():
     # We lose argv0 when going through the nix wrapper so instead report the
     # values as saved/exported by the nix wrapper itself.
     ret["argv0"] = os.environ.get('NIX_ORIG_ARGV0') or sys.argv[0]
-    ret["argv0_abs"] = os.path.abspath(ret["argv0"])
-    ret["exec"] = os.path.realpath(ret["argv0"])
+    ret["abspath"] = os.path.abspath(ret["argv0"])
+    ret["realpath"] = os.path.realpath(ret["argv0"])
+    nix_name = "" # updated at Nix build time
+    if nix_name != "":
+        ret["nix_name"] = nix_name
 
-    ret["isnix"] = ret["exec"].startswith("/nix/store/")
+    ret["isnix"] = ret["realpath"].startswith("/nix/store/")
 
     if ret["isnix"]:
-        elts = ret["exec"].split("/")
+        elts = ret["realpath"].split("/")
         ret["nixpkg"] = elts[3]
 
         # A future feature: recording of source info in built package.
@@ -54,11 +57,13 @@ def get_runtime_info():
             if "version" in data:
                 ret["version"] = data["version"]
 
-    for key, value in geolocation_data().items():
-        ret[f"geo-{key}"] = value
 
-    if ret["argv0"] == ret["argv0_abs"]:
-        del ret["argv0_abs"]
+
+    for key, value in geolocation_data().items():
+        ret[key] = value
+
+    if ret["argv0"] == ret["abspath"]:
+        del ret["abspath"]
 
     ret["time"] = datetime.now().strftime("%H:%M:%S")
 

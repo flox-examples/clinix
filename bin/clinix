@@ -8,18 +8,21 @@ from termcolor import colored
 
 the_color = "green" # <== MODIFY HERE
 
-last_exec = None
+last_realpath = None
 while True:
     rinfo = get_runtime_info()
-    if last_exec is None:
-        last_exec = rinfo["exec"]
-    elif last_exec != rinfo["exec"]:
+    if last_realpath is None:
+        last_realpath = rinfo["realpath"]
+    elif last_realpath != rinfo["realpath"]:
         # Tail recursion
         os.execv(rinfo["argv0"], [rinfo["argv0"]])
 
     # Clear screen and print data
     keylen = max(map(len, rinfo.keys()))
     os.system("clear")
-    for k, v in sorted(get_runtime_info().items()):
-        print("%-*s %s" % (keylen + 1, k + ":", colored(v, the_color)))
+    info = get_runtime_info()
+    for k in [ "argv0", "abspath", "realpath", "nix_name", "city", "state", "country_name", "time" ]:
+        if k in info:
+            v = info[k]
+            print("%-*s %s" % (keylen + 1, k + ":", colored(v, the_color)))
     time.sleep(1)
