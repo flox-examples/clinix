@@ -11,5 +11,5 @@ setup(
     author_email='floxfan@floxdev.com',
     include_package_data=True,
     packages=find_packages(),
-    scripts=[ "clinix-demo" ]
+    scripts=[ "bin/clinix" ]
 )
