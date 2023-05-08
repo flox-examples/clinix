@@ -6,7 +6,7 @@ import sys, os, time
 from clinix import get_runtime_info
 from termcolor import colored
 
-the_color = "yellow" # <== MODIFY HERE
+the_color = "green" # <== MODIFY HERE
 
 last_realpath = None
 while True:
