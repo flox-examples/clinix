@@ -14,8 +14,9 @@ while True:
     if last_realpath is None:
         last_realpath = rinfo["realpath"]
     elif last_realpath != rinfo["realpath"]:
-        # Tail recursion
-        os.execv(rinfo["argv0"], [rinfo["argv0"]])
+        # Tail recursion, but don't race the symlink
+        if os.path.exists([rinfo["argv0"]]):
+            os.execv(rinfo["argv0"], [rinfo["argv0"]])
 
     # Clear screen and print data
     keylen = max(map(len, rinfo.keys()))
