@@ -7,7 +7,7 @@ from clinix import get_runtime_info
 from termcolor import colored
 
 # red -> yellow -> magenta -> green -> cyan
-the_color = "cyan" # <== MODIFY HERE
+the_color = "red" # <== MODIFY HERE
 
 last_realpath = None
 while True:
