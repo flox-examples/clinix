@@ -19,6 +19,13 @@ while True:
         if os.path.exists(rinfo["argv0"]):
             os.execv(rinfo["argv0"], [rinfo["argv0"]])
 
+    # Another race condition.
+    if rinfo["nix_name"] != "":
+        if rinfo["nix_name"] not in rinfo["realpath"]:
+            # Tail recursion, but don't race the symlink
+            if os.path.exists(rinfo["argv0"]):
+                os.execv(rinfo["argv0"], [rinfo["argv0"]])
+
     # Clear screen and print data
     keylen = max(map(len, rinfo.keys()))
     os.system("clear")
